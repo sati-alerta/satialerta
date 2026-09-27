@@ -1,0 +1,24 @@
+Options -Indexes
+
+# Redireciona tudo para public/ exceto api/
+RewriteEngine On
+
+# Bloqueia acesso direto a pastas sensíveis
+RewriteRule ^(core|modules|config|database|cron|\.env)(.*)$ - [F,L]
+
+# API routes
+RewriteCond %{REQUEST_URI} ^/appSati-alerta/api/
+RewriteRule ^api/(.*)$ api/index.php [QSA,L]
+
+# App routes → public/
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ public/index.php [QSA,L]
+
+# Security headers
+<IfModule mod_headers.c>
+    Header always set X-Frame-Options "SAMEORIGIN"
+    Header always set X-Content-Type-Options "nosniff"
+    Header always set X-XSS-Protection "1; mode=block"
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+</IfModule>

@@ -1,0 +1,22 @@
+# Environment variables
+.env
+
+# Dependencies / Vendor
+/vendor/
+/node_modules/
+
+# IDE / Editor
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace
+.agents/
+
+# OS files
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# Logs & temp
+*.log
+/tmp/
