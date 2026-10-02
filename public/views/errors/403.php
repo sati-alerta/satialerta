@@ -19,7 +19,7 @@
     <h1>403</h1>
     <p style="font-size:1.1rem;color:#e2eaf4;margin-top:.5rem">Acesso Negado</p>
     <p>Você não tem permissão para acessar esta página.</p>
-    <a href="<?= defined('ROOT_PATH') ? \Core\Helper::url('login') : '/appSati-alerta/public/login' ?>">
+    <a href="<?= class_exists('\Core\Helper') ? \Core\Helper::url('login') : '/login' ?>">
       <i class="bi bi-person-fill"></i> Fazer Login
     </a>
   </div>

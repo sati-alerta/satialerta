@@ -13,13 +13,74 @@ class Helper
         self::$baseUrl = rtrim($url, '/');
     }
 
+    public static function getBaseUrl(): string
+    {
+        if (self::$baseUrl === '') {
+            self::detectBaseUrl();
+        }
+        return self::$baseUrl;
+    }
+
+    public static function detectBaseUrl(): string
+    {
+        // 1. Detecta via servidor (HTTP_HOST)
+        $host = $_SERVER['HTTP_HOST'] ?? '';
+        if (!empty($host)) {
+            $isHttps = (
+                (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ||
+                (!empty($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https') ||
+                (!empty($_SERVER['SERVER_PORT']) && (int)$_SERVER['SERVER_PORT'] === 443)
+            );
+            $scheme = $isHttps ? 'https' : 'http';
+
+            // Servidor com domínio real (ex: app.exemplo.com)
+            if (!str_contains($host, 'localhost') && !str_contains($host, '127.0.0.1')) {
+                self::$baseUrl = "{$scheme}://{$host}";
+                return self::$baseUrl;
+            }
+
+            // Localhost com subpasta
+            $requestUri = $_SERVER['REQUEST_URI'] ?? '';
+            if (str_starts_with($requestUri, '/appSati-alerta')) {
+                self::$baseUrl = "{$scheme}://{$host}/appSati-alerta";
+                return self::$baseUrl;
+            }
+        }
+
+        // 2. Se tiver APP_URL configurado no .env
+        $envUrl = Config::env('APP_URL');
+        if (!empty($envUrl)) {
+            self::$baseUrl = rtrim($envUrl, '/');
+            return self::$baseUrl;
+        }
+
+        self::$baseUrl = 'http://localhost/appSati-alerta';
+        return self::$baseUrl;
+    }
+
     /**
      * Gera URL completa para uma rota da aplicação
      */
     public static function url(string $path = ''): string
     {
+        $base = self::getBaseUrl();
         $path = ltrim($path, '/');
-        return self::$baseUrl . '/public/' . $path;
+        if ($path === 'public' || $path === 'index.php') {
+            $path = '';
+        }
+
+        // Se a base já terminar com /public
+        if (str_ends_with($base, '/public')) {
+            return $path === '' ? $base : $base . '/' . $path;
+        }
+
+        // Se estiver rodando em localhost XAMPP em subpasta (/appSati-alerta)
+        if (str_contains($base, 'localhost/appSati-alerta') || str_contains($base, '127.0.0.1/appSati-alerta')) {
+            return $path === '' ? $base . '/public' : $base . '/public/' . $path;
+        }
+
+        // Em servidor de produção com domínio próprio (ex: app.exemplo.com)
+        return $path === '' ? $base : $base . '/' . $path;
     }
 
     /**
@@ -27,10 +88,17 @@ class Helper
      */
     public static function asset(string $path): string
     {
+        $base     = self::getBaseUrl();
         $root     = defined('ROOT_PATH') ? ROOT_PATH : dirname(__DIR__);
-        $filePath = $root . '/public/assets/' . ltrim($path, '/');
+        $path     = ltrim($path, '/');
+        $filePath = $root . '/public/assets/' . $path;
         $version  = file_exists($filePath) ? '?v=' . filemtime($filePath) : '';
-        return self::$baseUrl . '/public/assets/' . ltrim($path, '/') . $version;
+
+        if (str_ends_with($base, '/public')) {
+            return $base . '/assets/' . $path . $version;
+        }
+
+        return $base . '/public/assets/' . $path . $version;
     }
 
     /**
@@ -70,7 +138,7 @@ class Helper
     /**
      * Responde com JSON (para endpoints AJAX)
      */
-    public static function jsonResponse(mixed $data, int $code = 200): never
+    public static function jsonResponse(mixed $data, int $code = 200): void
     {
         http_response_code($code);
         header('Content-Type: application/json; charset=utf-8');
@@ -81,7 +149,7 @@ class Helper
     /**
      * Redireciona para uma URL
      */
-    public static function redirect(string $url): never
+    public static function redirect(string $url): void
     {
         header("Location: {$url}");
         exit;

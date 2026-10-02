@@ -31,7 +31,7 @@ class Database
             self::$instance = new PDO($dsn, $cfg['user'], $cfg['pass'], $cfg['options']);
         } catch (PDOException $e) {
             error_log('[SATI-DB] Conexão falhou: ' . $e->getMessage());
-            throw new \RuntimeException('Falha na conexão com o banco de dados. Tente novamente.');
+            throw new \RuntimeException('Falha na conexão com o banco de dados: ' . $e->getMessage(), (int)$e->getCode(), $e);
         }
     }
 

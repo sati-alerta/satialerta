@@ -44,9 +44,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 $uri    = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
 $method = strtoupper($_SERVER['REQUEST_METHOD'] ?? 'GET');
 
-// Remove prefixo /appSati-alerta/api
-$uri = preg_replace('#^/appSati-alerta/api#', '', $uri);
+// Remove prefixo de subpasta (/appSati-alerta) e pasta da API (/api)
+$uri = preg_replace('#^/appSati-alerta#i', '', $uri);
+$uri = preg_replace('#^/api#i', '', $uri);
 $uri = '/' . trim($uri, '/');
+if ($uri === '') $uri = '/';
 
 // Rate Limiting global
 try {

@@ -19,7 +19,7 @@
     <h1>404</h1>
     <p style="font-size:1.1rem;color:#e2eaf4;margin-top:.5rem">Página não encontrada</p>
     <p>A página que você procura não existe ou foi movida.</p>
-    <a href="<?= defined('ROOT_PATH') ? \Core\Helper::url('') : '/appSati-alerta/public/' ?>">
+    <a href="<?= class_exists('\Core\Helper') ? \Core\Helper::url('') : '/' ?>">
       <i class="bi bi-house-fill"></i> Voltar ao Início
     </a>
   </div>

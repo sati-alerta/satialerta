@@ -4,7 +4,9 @@ return [
     'name'     => $_ENV['APP_NAME']     ?? 'SATI-Alerta',
     'env'      => $_ENV['APP_ENV']      ?? 'production',
     'debug'    => filter_var($_ENV['APP_DEBUG'] ?? false, FILTER_VALIDATE_BOOLEAN),
-    'url'      => $_ENV['APP_URL']      ?? 'http://localhost/appSati-alerta',
+    'url'      => (!empty($_SERVER['HTTP_HOST']) && !str_contains($_SERVER['HTTP_HOST'], 'localhost') && !str_contains($_SERVER['HTTP_HOST'], '127.0.0.1'))
+        ? (((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || (!empty($_SERVER['SERVER_PORT']) && (int)$_SERVER['SERVER_PORT'] === 443) || (!empty($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https')) ? 'https://' : 'http://') . $_SERVER['HTTP_HOST']
+        : ($_ENV['APP_URL'] ?? 'http://localhost/appSati-alerta'),
     'key'      => $_ENV['APP_KEY']      ?? '',
     'timezone' => $_ENV['APP_TIMEZONE'] ?? 'America/Manaus',
 

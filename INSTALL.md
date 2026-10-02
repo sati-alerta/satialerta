@@ -123,3 +123,4 @@ Resposta esperada:
 | Público | maria@escola.am.gov.br | Admin@2025 |
 
 > ⚠️ **Troque as senhas após o primeiro acesso em produção!**
+

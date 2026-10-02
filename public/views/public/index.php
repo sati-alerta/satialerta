@@ -14,7 +14,9 @@ if (!defined('ROOT_PATH')) {
     \Core\Config::loadEnv(ROOT_PATH . '/.env');
     $appCfg = \Core\Config::get('app');
     date_default_timezone_set($appCfg['timezone'] ?? 'America/Manaus');
-    \Core\Helper::setBaseUrl($appCfg['url'] ?? 'http://localhost/appSati-alerta');
+    if (!empty($appCfg['url'])) {
+        \Core\Helper::setBaseUrl($appCfg['url']);
+    }
 }
 
 use Core\Database;

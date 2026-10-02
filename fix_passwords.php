@@ -1,9 +1,16 @@
 <?php
 // Script temporário para corrigir os hashes de senha
-$host = 'localhost';
-$db   = 'sati_alerta';
-$user = 'root';
-$pass = '';
+if (file_exists(__DIR__ . '/core/Config.php')) {
+    require_once __DIR__ . '/core/Config.php';
+    if (file_exists(__DIR__ . '/.env')) {
+        \Core\Config::loadEnv(__DIR__ . '/.env');
+    }
+}
+
+$host = $_ENV['DB_HOST'] ?? 'localhost';
+$db   = $_ENV['DB_NAME'] ?? 'sati_alerta';
+$user = $_ENV['DB_USER'] ?? 'root';
+$pass = $_ENV['DB_PASS'] ?? '';
 
 try {
     $pdo = new PDO("mysql:host=$host;dbname=$db;charset=utf8mb4", $user, $pass);

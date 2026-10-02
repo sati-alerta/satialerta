@@ -20,3 +20,13 @@ Desktop.ini
 # Logs & temp
 *.log
 /tmp/
+
+# Archives & Backups
+*.zip
+*.tar.gz
+*.tgz
+*.rar
+*.bak
+
+# Local dumps
+/sati_alerta_completo.sql

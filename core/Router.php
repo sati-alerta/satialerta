@@ -32,11 +32,14 @@ class Router
         $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
         $uri    = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
 
-        // Remove o prefixo do app da URI
-        $base = '/appSati-alerta/public';
-        if (str_starts_with($uri, $base)) {
-            $uri = substr($uri, strlen($base));
-        }
+        // Remove prefixo de subpasta (ex: /appSati-alerta)
+        $uri = preg_replace('#^/appSati-alerta#i', '', $uri);
+
+        // Remove prefixos /public/index.php, /public ou /index.php
+        $uri = preg_replace('#^/public/index\.php#i', '', $uri);
+        $uri = preg_replace('#^/index\.php#i', '', $uri);
+        $uri = preg_replace('#^/public#i', '', $uri);
+
         $uri = '/' . ltrim(rtrim($uri, '/'), '/');
         if ($uri === '') $uri = '/';
 

@@ -7,7 +7,6 @@ RewriteEngine On
 RewriteRule ^(core|modules|config|database|cron|\.env)(.*)$ - [F,L]
 
 # API routes
-RewriteCond %{REQUEST_URI} ^/appSati-alerta/api/
 RewriteRule ^api/(.*)$ api/index.php [QSA,L]
 
 # App routes → public/
